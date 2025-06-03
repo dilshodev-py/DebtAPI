@@ -1,16 +1,13 @@
 import random
 from datetime import timedelta
-
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from drf_spectacular.utils import extend_schema
 from redis import Redis
-from rest_framework.generics import CreateAPIView
 from rest_framework.views import APIView
-
-from authenticate.models import User
 from authenticate.serializers import RegisterModelSerializer
 from root.settings import EMAIL_HOST_USER
+
 
 
 @extend_schema(tags=['auth'] , request=RegisterModelSerializer)

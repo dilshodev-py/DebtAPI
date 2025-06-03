@@ -20,12 +20,12 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            cd /var/www/DebtAPI
+            cd /var/www/debtapi
             git fetch origin
             git reset --hard origin/master
             git pull origin
             source .venv/bin/activate
-            pip install -r requirements.txt
+            pip install -r req.txt
             make mig
             sudo systemctl restart debt_project.service
             sudo systemctl enable debt_project.service

@@ -6,10 +6,8 @@ from django.http import JsonResponse
 from drf_spectacular.utils import extend_schema
 from redis import Redis
 from rest_framework.views import APIView
-
-from authenticate.models import User
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from authenticate.serializers import RegisterModelSerializer, VerifyOtpSerializer
-from authenticate.tasks import send_email
 from root.settings import EMAIL_HOST_USER
 
 
@@ -51,6 +49,14 @@ class VerifyOtpAPIView(APIView):
         else:
             return JsonResponse({"status": 400 , "error":serializer.errors})
         return JsonResponse({"status": 201, "message": "Mofaqiyatli register qilindi !"})
+
+@extend_schema(tags=['auth'])
+class CustomTokenObtainPairView(TokenObtainPairView):
+    pass
+@extend_schema(tags=['auth'])
+class CustomTokenRefreshView(TokenRefreshView):
+    pass
+
 
 
 

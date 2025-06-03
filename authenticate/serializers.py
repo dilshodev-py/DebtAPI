@@ -1,5 +1,7 @@
 from django.contrib.auth.hashers import make_password
+from django.db.migrations.serializer import Serializer
 from rest_framework.exceptions import ValidationError
+from rest_framework.fields import CharField
 from rest_framework.serializers import ModelSerializer
 
 from authenticate.models import User
@@ -22,4 +24,12 @@ class RegisterModelSerializer(ModelSerializer):
         if not value.replace(" ", "").isalpha():
             raise ValidationError("Fullname to'liq to'g'ri kiritilsin")
         return value
+
+class VerifyOtpSerializer(Serializer):
+    email = CharField(max_length=255)
+    otp_code = CharField(max_length=255)
+
+
+
+
 

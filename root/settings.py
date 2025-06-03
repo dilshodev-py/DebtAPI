@@ -136,8 +136,8 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = 'authenticate.User'
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Your Project API',
-    'DESCRIPTION': 'Your project description',
+    'TITLE': 'Debt Project API',
+    'DESCRIPTION': 'Debt project description',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     # OTHER SETTINGS

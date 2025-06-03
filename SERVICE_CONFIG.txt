@@ -43,14 +43,14 @@
 
 
 
+
+systemctl stop debt_project.service
+
+
 systemctl start debt_project.service
 systemctl enable debt_project.service
 systemctl restart debt_project.service
 systemctl status debt_project.service
-systemctl stop debt_project.service
-
-
-
 sudo systemctl enable nginx.service
 sudo systemctl restart nginx.service
 sudo systemctl status nginx.service

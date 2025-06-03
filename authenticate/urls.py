@@ -1,7 +1,7 @@
 from django.urls import path
 
-from authenticate.views import HelloAPIVIEW
+from authenticate.views import RegisterAPIView
 
 urlpatterns = [
-    path('hello' , HelloAPIVIEW.as_view())
+    path('register' , RegisterAPIView.as_view())
 ]

@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 
 from authenticate.models import User
 from authenticate.serializers import RegisterModelSerializer, VerifyOtpSerializer
+from authenticate.tasks import send_email
 from root.settings import EMAIL_HOST_USER
 
 
@@ -22,6 +23,7 @@ class RegisterAPIView(APIView):
         data_str = json.dumps(data)
         email = data.get("email")
         send_mail("Verify Code" , f"Code: {code}" , EMAIL_HOST_USER , [email]) # TODO celery ishlatish kerak
+        # send_email(email , f"Code: {code}")
         ser = RegisterModelSerializer(data=data)
         if ser.is_valid():
             redis = Redis(decode_responses=True)
@@ -36,14 +38,18 @@ class VerifyOtpAPIView(APIView):
         email = data.get("email")
         otp_code = data.get("otp_code")
         r = Redis(decode_responses=True)
-        data_str = r.mget(email)
+        data_str = r.mget(email)[0]
         if not data_str:
-            return JsonResponse({"status": 400 , "message": "tastiqlash vaqti tugadi !"})
+            return JsonResponse({"status": 400 , "error": "tastiqlash vaqti tugadi !"})
         data_dict = json.loads(data_str)
         code = data_dict.pop("code")
         if str(code) != str(otp_code):
-            return JsonResponse({"status": 400 , "message": "Tastiqlash code xato !"})
-        User.objects.create(**data_dict)
+            return JsonResponse({"status": 400 , "error": "Tastiqlash code xato !"})
+        serializer= RegisterModelSerializer(data=data_dict)
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            return JsonResponse({"status": 400 , "error":serializer.errors})
         return JsonResponse({"status": 201, "message": "Mofaqiyatli register qilindi !"})
 
 

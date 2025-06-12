@@ -75,10 +75,11 @@ class CustomUserManager(UserManager):
 class User(AbstractUser):
     first_name = None
     last_name = None
+    username = None
     fullname= CharField(max_length=255)
     balance = DecimalField(max_digits=10, decimal_places=2, default=0)
     USERNAME_FIELD = 'email'
-    email = CharField(max_length=255, unique=True)
+    email = CharField(max_length=255, unique=True, default="absaitovdev@gmail.com")
     REQUIRED_FIELDS = []
     objects = CustomUserManager()
 

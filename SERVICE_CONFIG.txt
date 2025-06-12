@@ -2,7 +2,7 @@
 
 2) server {
     listen       8000;
-    server_name  81.19.135.65;
+    server_name  46.149.68.29;
 
     location = /favicon.ico { access_log off; log_not_found off; }
 

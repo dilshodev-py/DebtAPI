@@ -24,7 +24,7 @@ class RegisterAPIView(APIView):
         data_str = json.dumps(data)
         email = data.get("email")
         # send_mail("Verify Code" , f"Code: {code}" , EMAIL_HOST_USER , [email]) # TODO celery ishlatish kerak
-        send_email(email, f"Code: {code}")
+        send_email.delay(email, f"Code: {code}")
         ser = RegisterModelSerializer(data=data)
         if ser.is_valid():
             redis = Redis(decode_responses=True)

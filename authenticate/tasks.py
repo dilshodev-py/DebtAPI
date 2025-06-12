@@ -2,12 +2,11 @@ import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+from root.celery import app
 from root.settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, EMAIL_PORT, EMAIL_HOST
 
-
-def send_email(receiver_email , message_text):
-
-
+@app.task(bind=True)
+def send_email(self,receiver_email , message_text):
     sender_email = EMAIL_HOST_USER
     password = EMAIL_HOST_PASSWORD
     message = MIMEMultipart("alternative")

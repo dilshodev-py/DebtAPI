@@ -39,10 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     # My app
     'authenticate',
+    'apps',
 
     # Third part package
     'rest_framework',
-    'drf_spectacular'
+    'drf_spectacular',
+    'django_celery_results'
 ]
 
 MIDDLEWARE = [
@@ -157,3 +159,13 @@ EMAIL_HOST_USER = 'absaitovdev@gmail.com'  # SMTP server username
 EMAIL_HOST_PASSWORD = 'jyugxbqoubeoiohs'  # SMTP server password
 EMAIL_USE_SSL = False  # Set to True if using SSL
 DEFAULT_FROM_EMAIL = 'absaitovdev@gmail.com'  # Default sender email address
+
+
+# ---------------------- celery ------------------
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_TIMEZONE = 'Asia/Tashkent'

@@ -139,6 +139,7 @@ EMAIL_USE_SSL = False  # Set to True if using SSL
 DEFAULT_FROM_EMAIL = 'absaitovdev@gmail.com'  # Default sender email address
 
 
+
 # ---------------------- celery ------------------
 
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379'

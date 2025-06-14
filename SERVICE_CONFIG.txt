@@ -43,7 +43,6 @@
 
 
 
-
 systemctl stop debt_project.service
 systemctl start debt_project.service
 systemctl enable debt_project.service

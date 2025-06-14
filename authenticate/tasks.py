@@ -7,18 +7,18 @@ from root.settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, EMAIL_PORT, EMAI
 
 @app.task(bind=True)
 def send_email(self,receiver_email , message_text):
-    # sender_email = EMAIL_HOST_USER
     sender_email = 'absaitovdev@gmail.com'
-    password = 'jyugxbqoubeoiohs'
+    password = EMAIL_HOST_PASSWORD
     message = MIMEMultipart("alternative")
     message["Subject"] = "multipart test"
     message["From"] = sender_email
     message["To"] = receiver_email
-    text = "salom"
+    text = message_text
+
 
     part1 = MIMEText(text, "plain")
     message.attach(part1)
-    with smtplib.SMTP_SSL(sender_email, EMAIL_PORT) as server:
+    with smtplib.SMTP_SSL(EMAIL_HOST, EMAIL_PORT) as server:
         server.login(sender_email, password)
         server.sendmail(
             sender_email, receiver_email, message.as_string()

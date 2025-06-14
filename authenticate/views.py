@@ -30,9 +30,7 @@ class RegisterAPIView(APIView):
             redis = Redis(decode_responses=True)
             redis.mset({email: data_str})
             redis.expire(email, time=timedelta(minutes=1))
-            return Jso
-
-            nResponse({"status": 200, "message": "Emailga tastiqlash code yuborildi"})
+            return JsonResponse({"status": 200, "message": "Emailga tastiqlash code yuborildi"})
         return JsonResponse({"status": HTTPStatus.BAD_REQUEST, "errors": ser.errors})
 
 

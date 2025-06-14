@@ -24,13 +24,15 @@ class RegisterAPIView(APIView):
         data_str = json.dumps(data)
         email = data.get("email")
         # send_mail("Verify Code" , f"Code: {code}" , EMAIL_HOST_USER , [email]) # TODO celery ishlatish kerak
-        send_email.delay(email, f"Code: {code}")
+        send_email(email, f"Code: {code}")
         ser = RegisterModelSerializer(data=data)
         if ser.is_valid():
             redis = Redis(decode_responses=True)
             redis.mset({email: data_str})
             redis.expire(email, time=timedelta(minutes=1))
-            return JsonResponse({"status": 200, "message": "Emailga tastiqlash code yuborildi"})
+            return Jso
+
+            nResponse({"status": 200, "message": "Emailga tastiqlash code yuborildi"})
         return JsonResponse({"status": HTTPStatus.BAD_REQUEST, "errors": ser.errors})
 
 

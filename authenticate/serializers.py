@@ -42,7 +42,7 @@ class ForgotPasswordSerializer(Serializer):
         if not query.exists():
             raise ValidationError("User not found")
         random_code = random.randrange(10**5 , 10**6)
-        send_email.delay(value , f"code : {random_code}")
+        send_email(value , f"code : {random_code}")
         redis = Redis(decode_responses=True)
         data_str = json.dumps({"status" : False , "code" : random_code})
         redis.mset({value : data_str})

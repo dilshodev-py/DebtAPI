@@ -42,6 +42,28 @@
     WantedBy=multi-user.target
 
 
+celery :
+4) nano /etc/systemd/system/celery.service
+
+
+5)
+[Unit]
+Description=Celery Service
+After=network.target
+
+[Service]
+Type=forking
+User=root
+Group=your_user
+WorkingDirectory=/var/www/debtapi
+ExecStart=/var/www/debtapi/.venv/bin/celery -A root.settings worker --loglevel=info --detach
+ExecStop=/bin/pkill -f 'celery worker'
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+
 
 systemctl stop debt_project.service
 systemctl start debt_project.service
@@ -51,6 +73,9 @@ systemctl status debt_project.service
 sudo systemctl enable nginx.service
 sudo systemctl restart nginx.service
 sudo systemctl status nginx.service
+sudo systemctl enable celery.service
+sudo systemctl start celery.service
+sudo systemctl status celery.service
 
 
 

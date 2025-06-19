@@ -23,14 +23,14 @@ class HomeOverviewAPIView(APIView):
 
         user_debts = Debt.objects.filter(contact__user=user)
 
-        my_debt = user_debts.annotate(
-            my_debt = Sum('debt_amount',filter=Q(is_my_debt=True)&Q(is_paid_back=False)&Q(is_overdue=False),default=0),
-            their_debt = Sum('debt_amount',filter=Q(is_my_debt=False)&Q(is_paid_back=False)&Q(is_overdue=False),default=0),
-            expired_debt = Sum('debt_amount',filter=Q(is_paid_back=False)&Q(is_overdue=True)),
-            overdue = Count('debt_amount',filter=Q(is_paid_back=False)&Q(is_overdue=True))
-        ).values("my_debt", "their_debt", "expired_debt", "overdue")
+        my_debt = user_debts.aggregate(
+            my_debt=Sum('debt_amount', filter=Q(is_my_debt=True, is_paid=False, is_overdue=False), default=0),
+            their_debt=Sum('debt_amount', filter=Q(is_my_debt=False, is_paid=False, is_overdue=False), default=0),
+            expired_debt=Sum('debt_amount', filter=Q(is_paid=False, is_overdue=True), default=0),
+            overdue=Count('id', filter=Q(is_paid=False, is_overdue=True), distinct=True)
+        )
 
-        return JsonResponse({"status": HTTPStatus.OK, "data": dict(my_debt)})
+        return JsonResponse({"status": HTTPStatus.OK, "data": my_debt})
 @extend_schema(tags=["contact"])
 
 class ContactCreateApiView(CreateAPIView):

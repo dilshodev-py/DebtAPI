@@ -30,12 +30,13 @@ class RegisterAPIView(APIView):
             redis = Redis(decode_responses=True)
             redis.mset({email: data_str})
             redis.expire(email, time=timedelta(minutes=1))
-            return JsonResponse({"status": 200, "message": "Emailga tastiqlash code yuborildi"})
-        return JsonResponse({"status": HTTPStatus.BAD_REQUEST, "errors": ser.errors})
+            return JsonResponse({"status": 200, "message": "Emailga tastiqlash code yuborildi","code": code})
+        return JsonResponse({"status": HTTPStatus.BAD_REQUEST, "errors": ser.errors })
 
 
 @extend_schema(tags=['auth'], request=VerifyOtpSerializer)
 class VerifyOtpAPIView(APIView):
+    serializer_class = VerifyOtpSerializer
     def post(self, request):
         data = request.data
         email = data.get("email")

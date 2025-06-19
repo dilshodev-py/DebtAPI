@@ -131,7 +131,7 @@ SPECTACULAR_SETTINGS = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # SMTP server host
-EMAIL_PORT = 465  # SMTP server port (587 for TLS, 465 for SSL)
+EMAIL_PORT = 587  # SMTP server port (587 for TLS, 465 for SSL)
 EMAIL_USE_TLS = True  # True for TLS, False for SSL
 EMAIL_HOST_USER = 'absaitovdev@gmail.com'  # SMTP server username
 EMAIL_HOST_PASSWORD = 'fxoreusmeruzitfh'  # SMTP server password

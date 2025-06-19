@@ -23,8 +23,9 @@ jobs:
             cd /var/www/debtapi
             git fetch origin
             git reset --hard origin/master
+            git remote remove origin
             git remote add origin https://github.com/dilshodev-py/DebtAPI.git
-            git pull origin
+            git pull origin master
             source .venv/bin/activate
             pip install -r req.txt
             make mig

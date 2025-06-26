@@ -1,6 +1,6 @@
 from email.policy import default
 from http import HTTPStatus
-
+from django.shortcuts import get_object_or_404
 from django.db.models import Sum, Q, Count
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -10,8 +10,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from apps.models import Debt, Contact
 from apps.serializers import ContactModelSerializer, DebtModelSerializer
-
-
+from rest_framework.response import Response
+from .serializers import DebtSerializer
+from rest_framework import status
 # Create your views here.
 
 class HomeOverviewAPIView(APIView):
@@ -98,4 +99,15 @@ class ContactDestroyApiView(DestroyAPIView):
     permission_classes = IsAuthenticated,
 
 
+class PayDebtView(APIView):
+    def post(self, request, debt_id):
+        debt = get_object_or_404(Debt, id=debt_id)
 
+        if debt.is_paid:
+            return Response({"xato": "Qarz allaqachon to‘langan"}, status=status.HTTP_400_BAD_REQUEST)
+
+        debt.is_paid = True
+        debt.save()
+
+        serializer = DebtSerializer(debt)
+        return Response(serializer.data, status=status.HTTP_200_OK)

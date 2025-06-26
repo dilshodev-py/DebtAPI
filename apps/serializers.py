@@ -23,3 +23,10 @@ class DebtModelSerializer(ModelSerializer):
         data = self.data
         data['contact_id'] = self.context['request'].parser_context.get('kwargs').get('pk')
         Debt.objects.create(**data)
+
+
+class DebtSerializer(ModelSerializer):
+    class Meta:
+        model = Debt
+        fields = ['id', 'contact', 'debt_amount', 'description', 'created_at', 'due_date', 'is_my_debt', 'is_paid', 'is_overdue']
+        read_only_fields = ['created_at', 'is_overdue']

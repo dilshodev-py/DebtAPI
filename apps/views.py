@@ -1,6 +1,5 @@
 from email.policy import default
 from http import HTTPStatus
-
 from django.db.models import Sum, Q, Count
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -10,6 +9,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from apps.models import Debt, Contact
 from apps.serializers import ContactModelSerializer, DebtModelSerializer
+from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.permissions import IsAuthenticated
+from .models import Contact
+from .serializers import ContactUpdateSerializer
+from rest_framework.exceptions import PermissionDenied
 
 
 # Create your views here.
@@ -98,4 +102,16 @@ class ContactDestroyApiView(DestroyAPIView):
     permission_classes = IsAuthenticated,
 
 
+@extend_schema(tags=["contact"])
+class ContactUpdateAPIView(RetrieveUpdateAPIView):
+    serializer_class = ContactUpdateSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'id'
 
+    def get_queryset(self):
+        return Contact.objects.filter(user=self.request.user)
+
+    def perform_update(self, serializer):
+        if serializer.instance.user != self.request.user:
+            raise PermissionDenied("Faqat o'zingizni kontaktlaringizni o'zgartira olasiz.")
+        serializer.save()

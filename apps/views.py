@@ -1,16 +1,13 @@
-from email.policy import default
 from http import HTTPStatus
-
 from django.db.models import Sum, Q, Count
 from django.http import JsonResponse
-from django.shortcuts import render
 from drf_spectacular.utils import extend_schema
-from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from apps.models import Debt, Contact
 from apps.serializers import ContactModelSerializer, DebtModelSerializer
-
+from rest_framework import generics
 
 # Create your views here.
 
@@ -98,4 +95,7 @@ class ContactDestroyApiView(DestroyAPIView):
     permission_classes = IsAuthenticated,
 
 
-
+@extend_schema(tags=["debt"])
+class DebtPutApiView(generics.UpdateAPIView):
+    queryset = Debt.objects.all()
+    serializer_class = DebtModelSerializer

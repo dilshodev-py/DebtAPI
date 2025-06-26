@@ -1,13 +1,20 @@
+from email.policy import default
 from http import HTTPStatus
 from django.db.models import Sum, Q, Count
 from django.http import JsonResponse
+from django.shortcuts import render
 from drf_spectacular.utils import extend_schema
-from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from apps.models import Debt, Contact
-from apps.serializers import ContactModelSerializer, DebtModelSerializer, DebtPutModelSerializer
-from rest_framework import generics
+from apps.serializers import ContactModelSerializer, DebtModelSerializer
+from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.permissions import IsAuthenticated
+from .models import Contact
+from .serializers import ContactUpdateSerializer
+from rest_framework.exceptions import PermissionDenied
+
 
 # Create your views here.
 
@@ -82,13 +89,11 @@ class DebtListApiView(ListAPIView):
         query = super().get_queryset().filter(contact__user=self.request.user)
         return query
 
-
 @extend_schema(tags=["debt"])
 class DebtCreateApiView(CreateAPIView):
     queryset = Debt.objects.all()
     serializer_class = DebtModelSerializer
     permission_classes = IsAuthenticated,
-
 
 @extend_schema(tags=["contact"])
 class ContactDestroyApiView(DestroyAPIView):
@@ -97,16 +102,27 @@ class ContactDestroyApiView(DestroyAPIView):
     permission_classes = IsAuthenticated,
 
 
+@extend_schema(tags=["contact"])
+class ContactUpdateAPIView(RetrieveUpdateAPIView):
+    serializer_class = ContactUpdateSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'id'
 @extend_schema(tags=["debt"])
 class DebtPutApiView(generics.UpdateAPIView):
     queryset = Debt.objects.all()
     serializer_class = DebtPutModelSerializer
 
+    def get_queryset(self):
+        return Contact.objects.filter(user=self.request.user)
 @extend_schema(tags=["debt"])
 class DebtDestroyApiView(DestroyAPIView):
     queryset = Debt.objects.all()
     serializer_class = DebtModelSerializer
     permission_classes = (IsAuthenticated,)
 
+    def perform_update(self, serializer):
+        if serializer.instance.user != self.request.user:
+            raise PermissionDenied("Faqat o'zingizni kontaktlaringizni o'zgartira olasiz.")
+        serializer.save()
     def get_queryset(self):
         return super().get_queryset().filter(contact__user=self.request.user)

@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from apps.views import HomeOverviewAPIView, ContactCreateApiView, ContactListApiView, ContactDebtListApiView, \
-    DebtCreateApiView, ContactDestroyApiView, DebtListApiView, DebtPutApiView, DebtDestroyApiView
+    DebtCreateApiView, ContactDestroyApiView, DebtListApiView, DebtPutApiView, DebtDestroyApiView, ContactUpdateAPIView
 from authenticate.views import RegisterAPIView, VerifyOtpAPIView, CustomTokenObtainPairView, CustomTokenRefreshView, \
     ForgotPasswordAPIView, ForgotPasswordOtpAPIView, ForgotChangePasswordAPIView
 
@@ -20,4 +20,5 @@ urlpatterns = [
     path("contact/<int:pk>",ContactDestroyApiView.as_view()),
     path("debt/put/<int:pk>", DebtPutApiView.as_view()),
     path("debt/delete/<int:pk>/", DebtDestroyApiView.as_view()),
+    path("contact/update/<int:id>",ContactUpdateAPIView.as_view())
 ]

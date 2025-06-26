@@ -15,7 +15,6 @@ from rest_framework.exceptions import PermissionDenied
 
 
 from rest_framework.response import Response
-from .serializers import DebtSerializer
 from rest_framework import status
 # Create your views here.
 
@@ -111,6 +110,9 @@ class ContactUpdateAPIView(RetrieveUpdateAPIView):
     permission_classes = IsAuthenticated,
     lookup_field = 'id'
 
+    def get_queryset(self):
+        return Contact.objects.filter(user=self.request.user)
+
     def perform_update(self, serializer):
         if serializer.instance.user != self.request.user:
             raise PermissionDenied("Faqat o'zingizni kontaktlaringizni o'zgartira olasiz.")
@@ -125,10 +127,13 @@ class DebtPutApiView(UpdateAPIView):
 class PayDebtView(APIView):
     def post(self, request, debt_id):
         debt = get_object_or_404(Debt, id=debt_id)
+
         if debt.is_paid:
             return Response({"xato": "Qarz allaqachon to‘langan"}, status=status.HTTP_400_BAD_REQUEST)
-    def get_queryset(self):
-        return Contact.objects.filter(user=self.request.user)
+        debt.is_paid = True
+        debt.save()
+
+        return Response({"xato": "Qarz muvaffaqiyatli to‘landi"},status=status.HTTP_200_OK)
 
 
 
@@ -137,6 +142,7 @@ class DebtDestroyApiView(DestroyAPIView):
     queryset = Debt.objects.all()
     serializer_class = DebtModelSerializer
     permission_classes = (IsAuthenticated,)
+
     def get_queryset(self):
-        return super().get_queryset().filter(contact__user=self.request.user)
+        return super().get_queryset().filter(contact_id=self.request.user.id)
 

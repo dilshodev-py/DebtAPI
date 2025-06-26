@@ -102,3 +102,11 @@ class DebtPutApiView(generics.UpdateAPIView):
     queryset = Debt.objects.all()
     serializer_class = DebtPutModelSerializer
 
+@extend_schema(tags=["debt"])
+class DebtDestroyApiView(DestroyAPIView):
+    queryset = Debt.objects.all()
+    serializer_class = DebtModelSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return super().get_queryset().filter(contact__user=self.request.user)

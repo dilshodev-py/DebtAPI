@@ -23,3 +23,9 @@ class DebtModelSerializer(ModelSerializer):
         data = self.data
         data['contact_id'] = self.context['request'].parser_context.get('kwargs').get('pk')
         Debt.objects.create(**data)
+
+
+class DebtPutModelSerializer(ModelSerializer):
+    class Meta:
+        model = Debt
+        fields = "__all__"

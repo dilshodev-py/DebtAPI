@@ -6,7 +6,7 @@ from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView, 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from apps.models import Debt, Contact
-from apps.serializers import ContactModelSerializer, DebtModelSerializer
+from apps.serializers import ContactModelSerializer, DebtModelSerializer, DebtPutModelSerializer
 from rest_framework import generics
 
 # Create your views here.
@@ -82,11 +82,13 @@ class DebtListApiView(ListAPIView):
         query = super().get_queryset().filter(contact__user=self.request.user)
         return query
 
+
 @extend_schema(tags=["debt"])
 class DebtCreateApiView(CreateAPIView):
     queryset = Debt.objects.all()
     serializer_class = DebtModelSerializer
     permission_classes = IsAuthenticated,
+
 
 @extend_schema(tags=["contact"])
 class ContactDestroyApiView(DestroyAPIView):
@@ -98,4 +100,5 @@ class ContactDestroyApiView(DestroyAPIView):
 @extend_schema(tags=["debt"])
 class DebtPutApiView(generics.UpdateAPIView):
     queryset = Debt.objects.all()
-    serializer_class = DebtModelSerializer
+    serializer_class = DebtPutModelSerializer
+

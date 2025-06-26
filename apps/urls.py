@@ -18,5 +18,5 @@ urlpatterns = [
     path("contact-debt/<int:pk>",DebtCreateApiView.as_view()),
     path("debt/list",DebtListApiView.as_view()),
     path("contact/<int:pk>",ContactDestroyApiView.as_view()),
-    path("debt/put", DebtPutApiView.as_view())
+    path("debt/put/<int:pk>", DebtPutApiView.as_view())
 ]

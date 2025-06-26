@@ -103,11 +103,19 @@ class ContactDestroyApiView(DestroyAPIView):
     permission_classes = IsAuthenticated,
 
 
+
+
 @extend_schema(tags=["contact"])
 class ContactUpdateAPIView(RetrieveUpdateAPIView):
     serializer_class = ContactUpdateSerializer
     permission_classes = IsAuthenticated,
     lookup_field = 'id'
+
+    def perform_update(self, serializer):
+        if serializer.instance.user != self.request.user:
+            raise PermissionDenied("Faqat o'zingizni kontaktlaringizni o'zgartira olasiz.")
+        serializer.save()
+
 
 @extend_schema(tags=["debt"])
 class DebtPutApiView(UpdateAPIView):
@@ -129,11 +137,6 @@ class DebtDestroyApiView(DestroyAPIView):
     queryset = Debt.objects.all()
     serializer_class = DebtModelSerializer
     permission_classes = (IsAuthenticated,)
-
-    def perform_update(self, serializer):
-        if serializer.instance.user != self.request.user:
-            raise PermissionDenied("Faqat o'zingizni kontaktlaringizni o'zgartira olasiz.")
-        serializer.save()
     def get_queryset(self):
         return super().get_queryset().filter(contact__user=self.request.user)
 

@@ -1,5 +1,6 @@
 from email.policy import default
 from http import HTTPStatus
+from django.shortcuts import get_object_or_404
 from django.db.models import Sum, Q, Count
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -16,6 +17,9 @@ from .serializers import ContactUpdateSerializer
 from rest_framework.exceptions import PermissionDenied
 
 
+from rest_framework.response import Response
+from .serializers import DebtSerializer
+from rest_framework import status
 # Create your views here.
 
 class HomeOverviewAPIView(APIView):
@@ -111,7 +115,12 @@ class ContactUpdateAPIView(RetrieveUpdateAPIView):
 class DebtPutApiView(generics.UpdateAPIView):
     queryset = Debt.objects.all()
     serializer_class = DebtPutModelSerializer
+class PayDebtView(APIView):
+    def post(self, request, debt_id):
+        debt = get_object_or_404(Debt, id=debt_id)
 
+        if debt.is_paid:
+            return Response({"xato": "Qarz allaqachon to‘langan"}, status=status.HTTP_400_BAD_REQUEST)
     def get_queryset(self):
         return Contact.objects.filter(user=self.request.user)
 @extend_schema(tags=["debt"])
@@ -120,6 +129,11 @@ class DebtDestroyApiView(DestroyAPIView):
     serializer_class = DebtModelSerializer
     permission_classes = (IsAuthenticated,)
 
+        debt.is_paid = True
+        debt.save()
+
+        serializer = DebtSerializer(debt)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     def perform_update(self, serializer):
         if serializer.instance.user != self.request.user:
             raise PermissionDenied("Faqat o'zingizni kontaktlaringizni o'zgartira olasiz.")

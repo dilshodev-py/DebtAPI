@@ -42,3 +42,11 @@ class DebtPutModelSerializer(ModelSerializer):
     class Meta:
         model = Debt
         fields = "__all__"
+
+
+
+class DebtSerializer(ModelSerializer):
+    class Meta:
+        model = Debt
+        fields = ['id', 'contact', 'debt_amount', 'description', 'created_at', 'due_date', 'is_my_debt', 'is_paid', 'is_overdue']
+        read_only_fields = ['created_at', 'is_overdue']

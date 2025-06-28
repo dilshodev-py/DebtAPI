@@ -85,6 +85,7 @@ class DebtListApiView(ListAPIView):
         query = super().get_queryset().filter(contact__user=self.request.user)
         return query
 
+
 @extend_schema(tags=["debt"])
 class DebtCreateApiView(CreateAPIView):
     queryset = Debt.objects.all()

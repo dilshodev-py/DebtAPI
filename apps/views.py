@@ -1,17 +1,21 @@
-from email.policy import default
 from http import HTTPStatus
-
+from django.shortcuts import get_object_or_404
 from django.db.models import Sum, Q, Count
 from django.http import JsonResponse
-from django.shortcuts import render
 from drf_spectacular.utils import extend_schema
-from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView,UpdateAPIView
 from rest_framework.views import APIView
-from apps.models import Debt, Contact
-from apps.serializers import ContactModelSerializer, DebtModelSerializer
+from apps.models import Debt
+from apps.serializers import ContactModelSerializer, DebtModelSerializer, DebtPutModelSerializer
+from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.permissions import IsAuthenticated
+from .models import Contact
+from .serializers import ContactUpdateSerializer
+from rest_framework.exceptions import PermissionDenied
 
 
+from rest_framework.response import Response
+from rest_framework import status
 # Create your views here.
 
 class HomeOverviewAPIView(APIView):
@@ -99,4 +103,47 @@ class ContactDestroyApiView(DestroyAPIView):
     permission_classes = IsAuthenticated,
 
 
+
+
+@extend_schema(tags=["contact"])
+class ContactUpdateAPIView(RetrieveUpdateAPIView):
+    serializer_class = ContactUpdateSerializer
+    permission_classes = IsAuthenticated,
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        return Contact.objects.filter(user=self.request.user)
+
+    def perform_update(self, serializer):
+        if serializer.instance.user != self.request.user:
+            raise PermissionDenied("Faqat o'zingizni kontaktlaringizni o'zgartira olasiz.")
+        serializer.save()
+
+
+@extend_schema(tags=["debt"])
+class DebtPutApiView(UpdateAPIView):
+    queryset = Debt.objects.all()
+    serializer_class = DebtPutModelSerializer
+
+class PayDebtView(APIView):
+    def post(self, request, debt_id):
+        debt = get_object_or_404(Debt, id=debt_id)
+
+        if debt.is_paid:
+            return Response({"xato": "Qarz allaqachon to‘langan"}, status=status.HTTP_400_BAD_REQUEST)
+        debt.is_paid = True
+        debt.save()
+
+        return Response({"xato": "Qarz muvaffaqiyatli to‘landi"},status=status.HTTP_200_OK)
+
+
+
+@extend_schema(tags=["debt"])
+class DebtDestroyApiView(DestroyAPIView):
+    queryset = Debt.objects.all()
+    serializer_class = DebtModelSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return super().get_queryset().filter(contact_id=self.request.user.id)
 
